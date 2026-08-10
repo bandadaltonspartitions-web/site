@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Partothèque — BANDA LES DALTON'S</title>
-<link rel="manifest" href="./manifest.json">
-<link rel="apple-touch-icon" href="./icon-180.png">
+<title>Partothèque BETA — BANDA LES DALTON'S</title>
+<link rel="manifest" href="./manifest-beta.json">
+<link rel="apple-touch-icon" href="./icon-180-beta.png">
 <meta name="theme-color" content="#6E1015">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Partothèque">
+<meta name="apple-mobile-web-app-title" content="Partothèque BETA">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>
@@ -748,7 +748,7 @@
 <div class="wrap">
   <header>
     <button type="button" id="page-reload-btn" class="page-reload-btn" title="Recharger la page (F5)" aria-label="Recharger la page">↻</button>
-    <img class="brand-mark" src="./logo-header.png" alt="Logo Banda Les Dalton's Labatut">
+    <img class="brand-mark" src="./logo-header-beta.png" alt="Logo Banda Les Dalton's Labatut — version bêta">
     <div class="eyebrow">Partothèque</div>
     <h1>Banda Les Dalton's</h1>
     <div class="sub">Choisir son instrument et taper le nom de la partition.</div>
@@ -1029,13 +1029,17 @@
   // Stockage : Firebase Firestore (lecture publique en temps réel,
   // écriture réservée au compte admin connecté via Firebase Auth).
   // ---------------------------------------------------------------------
+  // ⚠️ À REMPLACER : ceci doit être la config de VOTRE PROPRE projet
+  // Firebase (console.firebase.google.com), pas celle de la Banda Esperanza.
+  // Créez un projet, activez Firestore + Authentication, puis copiez ici
+  // les valeurs affichées dans « Paramètres du projet > Vos applications ».
   const firebaseConfig = {
-    apiKey: "AIzaSyCzvnfsiLvE0Na_J7SgDMui-fzRbqZjELk",
+    apiKey: "VOTRE_API_KEY",
     authDomain: "partotheque-banda-daltons.firebaseapp.com",
     projectId: "partotheque-banda-daltons",
     storageBucket: "partotheque-banda-daltons.firebasestorage.app",
-    messagingSenderId: "336760436969",
-    appId: "1:336760436969:web:dd111506803b7007601878"
+    messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
+    appId: "VOTRE_APP_ID"
   };
 
   const firebaseReady = typeof firebase !== 'undefined';
