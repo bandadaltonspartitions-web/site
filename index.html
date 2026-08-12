@@ -233,9 +233,10 @@
 
   .search-field input {
     width: 100%;
+    box-sizing: border-box;
     font-family: 'Inter', sans-serif;
     font-size: 15px;
-    padding: 13px 14px;
+    padding: 13px 38px 13px 14px;
     border: 1.5px solid var(--ink);
     border-radius: 3px;
     background: var(--card);
@@ -247,6 +248,26 @@
     box-shadow: 0 0 0 3px var(--stamp-soft);
   }
   .search-field input::placeholder { color: #A8898C; }
+
+  .search-clear-btn {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink-soft);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .search-clear-btn:hover { background: var(--stamp-soft); color: var(--stamp); }
+  .search-clear-btn.hidden { display: none; }
 
   .status-line {
     font-family: 'IBM Plex Mono', monospace;
@@ -806,6 +827,7 @@
     <div class="search-row">
       <div class="search-field">
         <input type="text" id="search-input" placeholder="Chercher un PDF par nom…" autocomplete="off">
+        <button type="button" id="search-clear-btn" class="search-clear-btn hidden" title="Effacer la recherche" aria-label="Effacer la recherche">✕</button>
       </div>
       <button type="button" id="offline-toggle-btn" class="filter-btn" title="Gérer les partitions disponibles hors-ligne">📥 Hors-ligne</button>
       <button type="button" id="refresh-btn" class="filter-btn" title="Recharger le catalogue depuis Drive">↻ Actualiser</button>
@@ -878,6 +900,7 @@
   const setupScreen  = document.getElementById('setup-screen');
   const appScreen     = document.getElementById('app-screen');
   const searchInput   = document.getElementById('search-input');
+  const searchClearBtn = document.getElementById('search-clear-btn');
   const filterRow      = document.getElementById('filter-row');
   const statusLine     = document.getElementById('status-line');
   const resultsEl       = document.getElementById('results');
@@ -1410,10 +1433,24 @@
     subscribeToPlaylists();
   }
 
+  function updateSearchClearBtn() {
+    if (searchClearBtn) searchClearBtn.classList.toggle('hidden', !searchInput.value);
+  }
+
   searchInput.addEventListener('input', () => {
+    updateSearchClearBtn();
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(() => applyFilters(searchInput.value.trim()), 120);
   });
+
+  if (searchClearBtn) {
+    searchClearBtn.addEventListener('click', () => {
+      searchInput.value = '';
+      updateSearchClearBtn();
+      searchInput.focus();
+      applyFilters('');
+    });
+  }
 
   refreshBtn.addEventListener('click', () => {
     loadCatalog(true);
