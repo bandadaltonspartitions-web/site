@@ -1449,6 +1449,22 @@
     return segments.map(s => encodeURIComponent(s)).join('/');
   }
 
+  // fetch() avec un délai limite court : sur un réseau qui rame (4G faible,
+  // salle de répét mal couverte...), un fetch() sans limite peut rester
+  // bloqué très longtemps avant d'échouer — l'utilisateur regarde un écran
+  // de chargement qui ne bouge plus, alors qu'une copie hors-ligne est
+  // pourtant disponible immédiatement. Ce délai fait basculer sur le cache
+  // local rapidement plutôt que d'attendre indéfiniment.
+  async function fetchWithShortTimeout(url, options = {}, timeoutMs = 8000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      return await fetch(url, { ...options, signal: controller.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
   async function loadCatalog(forceRefresh = false) {
     if (isIndexing) return;
     if (fileIndex && !forceRefresh) {
@@ -1463,7 +1479,7 @@
 
     let loadedFromNetwork = false;
     try {
-      const res = await fetch(CONFIG.CATALOG_URL, { cache: 'no-store' });
+      const res = await fetchWithShortTimeout(CONFIG.CATALOG_URL, { cache: 'no-store' });
       if (res.ok) {
         const catalog = await res.json();
         fileIndex = catalog.files || [];
@@ -1471,7 +1487,7 @@
         loadedFromNetwork = true;
         idbPut('catalog', { key: 'catalog', files: fileIndex, basePath, fetchedAt: Date.now() }).catch(() => {});
       }
-    } catch (e) { /* pas de réseau : on retente le cache local ci-dessous */ }
+    } catch (e) { /* pas de réseau, ou trop lent (timeout) : on retente le cache local ci-dessous */ }
 
     if (!loadedFromNetwork) {
       const cached = await idbGet('catalog', 'catalog').catch(() => null);
